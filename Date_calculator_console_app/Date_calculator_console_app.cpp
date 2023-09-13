@@ -2,6 +2,7 @@
 //
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <cstring>
 #include <cmath>
@@ -19,7 +20,7 @@ using namespace std;
 int main()
 {
     dateCalculatorClass dc;
-    int diffDay, diffMonth, diffYear;
+    int diffDay = 0, diffMonth = 0, diffYear = 0;
     int* diffDayPtr;
     int* diffMonthPtr;
     int* diffYearPtr;
@@ -28,42 +29,80 @@ int main()
     diffMonthPtr = &diffMonth;
     diffYearPtr = &diffYear;
 
+    int sMonth = 0, sDay, sYear;
+    int eMonth, eDay, eYear;
+    string sDate, eDate;
+    int durationTotalDays, durationYear, durationMonth, durationDay;
+    bool fileOpen = false;
+    int numPass = 0, numFail = 0;
 
     std::cout << "Hello World!\n";
 
-    // This is where I will put the program that tests the date calculator
+    // open test data file
+    ifstream infile;
+    infile.open("date_test_data_01.txt");
+    //if (!infile) cout << "file cannot be opened" << endl;
+    if (infile.is_open()) {
+        cout << "file does exists" << endl;
+        fileOpen = true;
+    }
+    else {
+        cout << "file does NOT exit" << endl;
+        fileOpen = false;
+    }
 
-    // days 582
-    // ans = 1 year, 7 month, 3 day
-    dc.dateCalculator(14, 5, 2022, 17, 12, 2023, diffDayPtr, diffMonthPtr, diffYearPtr);
-    cout << *diffYearPtr << " year " << *diffMonthPtr << " month " << *diffDayPtr << " day " << endl;
+    while ((sMonth != 99) && (fileOpen)) {
 
-    // days 8664
-    // ans = 23 year, 8 month, 20 day
-    dc.dateCalculator(28, 3, 2000, 17, 12, 2023, diffDayPtr, diffMonthPtr, diffYearPtr);
-    cout << *diffYearPtr << " year " << *diffMonthPtr << " month " << *diffDayPtr << " day " << endl;
+        infile >> sMonth >> sDay >> sYear >> eMonth >> eDay >> eYear;
+        infile >> sDate >> eDate >> durationTotalDays >> durationYear >> durationMonth >> durationDay;
+        //cout << "sMonth: " << sMonth << endl;
+        //cout << "sDay: " << sDay << endl;
+        //cout << "sYear: " << sYear << endl;
+        //cout << "eMonth: " << eMonth << endl;
+        //cout << "eDay: " << eDay << endl;
+        //cout << "eYear: " << eYear << endl;
+        //cout << "sDate: " << sDate << endl;
+        //cout << "eDate: " << eDate << endl;
+        //cout << "durationTotalDays: " << durationTotalDays << endl;
+        //cout << "durationYear: " << durationYear << endl;
+        //cout << "durationMonth: " << durationMonth << endl;
+        //cout << "durationDay: " << durationDay << endl;
 
-    // days 79,959
-    // ans = 218 year, 11 month, 1 day
-    dc.dateCalculator(3, 2, 1804, 4, 1, 2023, diffDayPtr, diffMonthPtr, diffYearPtr);
-    cout << *diffYearPtr << " year " << *diffMonthPtr << " month " << *diffDayPtr << " day " << endl;
+        if (sMonth != 99) {
 
-    // days 119,393
-    // ans = 326 year, 10 month, 21 day
-    dc.dateCalculator(10, 7, 1660, 31, 5, 1987, diffDayPtr, diffMonthPtr, diffYearPtr);
-    cout << *diffYearPtr << " year " << *diffMonthPtr << " month " << *diffDayPtr << " day " << endl;
+            cout << "From\t" << sDate << "\tto\t" << eDate << endl;
 
-    // days 2 months, 25 days
-    dc.dateCalculator(20, 3, 2023, 14, 6, 2023, diffDayPtr, diffMonthPtr, diffYearPtr);
-    cout << *diffYearPtr << " year " << *diffMonthPtr << " month " << *diffDayPtr << " day " << endl;
+            // This is where I will put the program that tests the date calculator
 
-    // ans = 9 month, 22 day
-    dc.dateCalculator(3, 2, 2023, 25, 11, 2023, diffDayPtr, diffMonthPtr, diffYearPtr);
-    cout << *diffYearPtr << " year " << *diffMonthPtr << " month " << *diffDayPtr << " day " << endl;
+            // days 582
+            // ans = 1 year, 7 month, 3 day
+            dc.dateCalculator(sMonth, sDay, sYear, eMonth, eDay, eYear, diffMonthPtr, diffDayPtr, diffYearPtr);
+            //cout << *diffYearPtr << " year " << *diffMonthPtr << " month " << *diffDayPtr << " day " << endl;
 
-    // ans = 19 day
-    dc.dateCalculator(5, 10, 2023, 23, 10, 2023, diffDayPtr, diffMonthPtr, diffYearPtr);
-    cout << *diffYearPtr << " year " << *diffMonthPtr << " month " << *diffDayPtr << " day " << endl;
+            if ((*diffMonthPtr == durationMonth) && (*diffDayPtr == durationDay) && (*diffYearPtr == durationYear)) {
+                numPass++;
+                cout << "PASS" << endl;
+                cout << "File:\t\t" << durationYear << " year\t" << durationMonth << " month\t" << durationDay << " day" << endl;
+                cout << "Calculated:\t" << *diffYearPtr << " year\t" << *diffMonthPtr << " month\t" << *diffDayPtr << " day" << endl;
+            }
+            else {
+                numFail++;
+                cout << "NO pass" << endl;
+                cout << "File:\t\t" << durationYear << " year\t" << durationMonth << " month\t" << durationDay << " day" << endl;
+                cout << "Calculated:\t" << *diffYearPtr << " year\t" << *diffMonthPtr << " month\t" << *diffDayPtr << " day" << endl;
+            }
+
+            cout << endl;
+
+        } // if
+
+    } // end of outer while
+
+    cout << endl;
+    cout << "Number of tests passed:\t" << numPass << endl;
+    cout << "Number of tests failed:\t" << numFail << endl;
+
+    infile.close();
 
 
 }

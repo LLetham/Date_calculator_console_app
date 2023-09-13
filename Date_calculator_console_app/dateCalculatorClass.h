@@ -35,7 +35,7 @@ private:
 	int daysDiff = 0;
 	int totalDays = 0;
 	bool leapYear = false;
-	int currentYear; // NOT USED
+	int currentYear = 0; // NOT USED
 
 	// Variables for when the dates are less than a year apart
 	int daysStartMonth = 0;
@@ -59,7 +59,7 @@ private:
 			leapYear = true;
 		else leapYear = false;
 
-		if (leapYear) cout << year << "  Leap Year" << endl;
+		//if (leapYear) cout << year << "  Leap Year" << endl;
 
 		return (leapYear);
 	}
@@ -67,7 +67,7 @@ private:
 public:
 
 	// function to calculate the difference in days between startDate and endDate.
-	void dateCalculator(int startDay, int startMonth, int startYear, int endDay, int endMonth, int endYear, int* diffDayPtr, int* diffMonthPtr, int* diffYearPtr) {
+	void dateCalculator(int startMonth, int startDay, int startYear, int endMonth, int endDay, int endYear, int* diffMonthPtr, int* diffDayPtr, int* diffYearPtr) {
 
 		sDay = startDay;
 		sMonth = startMonth;
@@ -148,7 +148,7 @@ public:
 				}
 			}
 
-			cout << "Days between startDate and endDate: " << totalDays << endl << endl;
+			//cout << "Days between startDate and endDate: " << totalDays << endl << endl;
 
 			// Convert days to years, months and days
 			numYear = 0;
