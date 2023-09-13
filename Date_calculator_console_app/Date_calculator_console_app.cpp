@@ -53,6 +53,18 @@ int main()
     dc.dateCalculator(10, 7, 1660, 31, 5, 1987, diffDayPtr, diffMonthPtr, diffYearPtr);
     cout << *diffYearPtr << " year " << *diffMonthPtr << " month " << *diffDayPtr << " day " << endl;
 
+    // days 2 months, 25 days
+    dc.dateCalculator(20, 3, 2023, 14, 6, 2023, diffDayPtr, diffMonthPtr, diffYearPtr);
+    cout << *diffYearPtr << " year " << *diffMonthPtr << " month " << *diffDayPtr << " day " << endl;
+
+    // ans = 9 month, 22 day
+    dc.dateCalculator(3, 2, 2023, 25, 11, 2023, diffDayPtr, diffMonthPtr, diffYearPtr);
+    cout << *diffYearPtr << " year " << *diffMonthPtr << " month " << *diffDayPtr << " day " << endl;
+
+    // ans = 19 day
+    dc.dateCalculator(5, 10, 2023, 23, 10, 2023, diffDayPtr, diffMonthPtr, diffYearPtr);
+    cout << *diffYearPtr << " year " << *diffMonthPtr << " month " << *diffDayPtr << " day " << endl;
+
 
 }
 

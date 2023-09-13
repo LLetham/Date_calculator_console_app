@@ -37,6 +37,10 @@ private:
 	bool leapYear = false;
 	int currentYear; // NOT USED
 
+	// Variables for when the dates are less than a year apart
+	int daysStartMonth = 0;
+	int daysEndMonth = 0;
+
 	const int daysInMonthsNonLeap[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	const int daysInMonthsLeap[12] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	const int daysInYearLeap = 366;
@@ -55,7 +59,7 @@ private:
 			leapYear = true;
 		else leapYear = false;
 
-		//if (leapYear) cout << year << "  Leap Year" << endl;
+		if (leapYear) cout << year << "  Leap Year" << endl;
 
 		return (leapYear);
 	}
@@ -78,105 +82,161 @@ public:
 		// 2. count the days from the start of the endYear to the date in the endYear.
 		// 3. count the days in the years between startYear and endYear.
 
-		/////////////////////
-		// Calculate days from start date to end of startYear.
-		// If the sYear is a leap year, use daysInMonthLeap to count the days, otherwise use daysInMonthNonLeap.
-		daysStartYear = 0;
-		if (isLeapYear(sYear)) {
-			// get days in first month, which might be a partial month
-			daysStartYear = daysInMonthsLeap[sMonth - 1] - sDay;
-			sMonth++; // move to the next month in startYear;
-
-			// sum up the days in the whole months of the year
-			for (sMonth; sMonth <= monthsInYear; sMonth++) {
-				daysStartYear += daysInMonthsLeap[sMonth - 1];
-			}
-		}
-		else {
-			// get days in first month, which might be a partial month
-			daysStartYear = daysInMonthsNonLeap[sMonth - 1] - sDay;
-			sMonth++; // move to the next month in startYear;
-
-			// sum up the days in the whole months of the year
-			for (sMonth; sMonth <= monthsInYear; sMonth++) {
-				daysStartYear += daysInMonthsNonLeap[sMonth - 1];
-			}
-		}
-
-
-		// Calculate days from start of endYear to the date in endYear if
-		// endYear is not the same as startYear.
-		i = 1;
-		daysEndYear = 0;
-		if (isLeapYear(eYear)) {
-			// sum the days in the complete months
-			for (i; i < eMonth; i++) {
-				daysEndYear += daysInMonthsLeap[i - 1];
-			}
-
-			// add the days from the last month, which might be a partial month
-			daysEndYear += sDay;
-
-		}
-		else {
-			// sum the days in the complete months
-			for (i; i < eMonth; i++) {
-				daysEndYear += daysInMonthsNonLeap[i - 1];
-			}
-
-			// add the days from the last month, which might be a partial month
-			daysEndYear += eDay;
-		}
-
-
-		// Count the days of the years between startYear and endYear excluding startYear and endYear
-		sYear++;
-		totalDays = 0;
-		totalDays = daysStartYear + daysEndYear;
-
-		for (sYear; sYear < (eYear); sYear++) {
+		if (sYear != eYear) {
+			/////////////////////
+			// Calculate days from start date to end of startYear.
+			// If the sYear is a leap year, use daysInMonthLeap to count the days, otherwise use daysInMonthNonLeap.
+			daysStartYear = 0;
 			if (isLeapYear(sYear)) {
-				totalDays += 366;
+				// get days in first month, which might be a partial month
+				daysStartYear = daysInMonthsLeap[sMonth - 1] - sDay;
+				sMonth++; // move to the next month in startYear;
+
+				// sum up the days in the whole months of the year
+				for (sMonth; sMonth <= monthsInYear; sMonth++) {
+					daysStartYear += daysInMonthsLeap[sMonth - 1];
+				}
 			}
 			else {
-				totalDays += 365;
+				// get days in first month, which might be a partial month
+				daysStartYear = daysInMonthsNonLeap[sMonth - 1] - sDay;
+				sMonth++; // move to the next month in startYear;
+
+				// sum up the days in the whole months of the year
+				for (sMonth; sMonth <= monthsInYear; sMonth++) {
+					daysStartYear += daysInMonthsNonLeap[sMonth - 1];
+				}
 			}
-		}
 
-		cout << "Days between startDate and endDate: " << totalDays << endl << endl;
 
-		// Convert days to years, months and days
-		numYear = 0;
-		numYear = totalDays / daysPerYear;
-		factPart_numYear = modf(numYear, &intPart_numYear); // split float into interger and decimal portion
+			// Calculate days from start of endYear to the date in endYear if
+			// endYear is not the same as startYear.
+			i = 1;
+			daysEndYear = 0;
+			if (isLeapYear(eYear)) {
+				// sum the days in the complete months
+				for (i; i < eMonth; i++) {
+					daysEndYear += daysInMonthsLeap[i - 1];
+				}
 
-		diffYear = (int)intPart_numYear; // get years, cast into integer
+				// add the days from the last month, which might be a partial month
+				daysEndYear += sDay;
 
-		numDay = 0;
-		// get month
-		if (isLeapYear(eYear)) {
-			numDay = factPart_numYear * daysInYearLeap;
-		}
+			}
+			else {
+				// sum the days in the complete months
+				for (i; i < eMonth; i++) {
+					daysEndYear += daysInMonthsNonLeap[i - 1];
+				}
+
+				// add the days from the last month, which might be a partial month
+				daysEndYear += eDay;
+			}
+
+
+			// Count the days of the years between startYear and endYear excluding startYear and endYear
+			sYear++;
+			totalDays = 0;
+			totalDays = daysStartYear + daysEndYear;
+
+			for (sYear; sYear < (eYear); sYear++) {
+				if (isLeapYear(sYear)) {
+					totalDays += 366;
+				}
+				else {
+					totalDays += 365;
+				}
+			}
+
+			cout << "Days between startDate and endDate: " << totalDays << endl << endl;
+
+			// Convert days to years, months and days
+			numYear = 0;
+			numYear = totalDays / daysPerYear;
+			factPart_numYear = modf(numYear, &intPart_numYear); // split float into interger and decimal portion
+
+			diffYear = (int)intPart_numYear; // get years, cast into integer
+
+			numDay = 0;
+			// get month
+			if (isLeapYear(eYear)) {
+				numDay = factPart_numYear * daysInYearLeap;
+			}
+			else {
+				numDay = factPart_numYear * daysInYearNonLeap;
+			}
+
+			i = 0;
+			numMonth = 0;
+			if (isLeapYear(eYear)) {
+				while (numDay > daysInMonthsLeap[i]) {
+					numDay = numDay - daysInMonthsLeap[i];
+					numMonth++; // enough days for a whole month
+					i++; // move to next month
+				}
+			}
+			else {
+				while (numDay > daysInMonthsNonLeap[i]) {
+					numDay = numDay - daysInMonthsNonLeap[i];
+					numMonth++; // enough days for a whole month
+					i++; // move to next month
+				}
+			}
+
+		}	// end of if for more than one year
+
+		
+		//////////////////////////////////////////////////////
+		// sYear == eYear
+		// less than a year of elapsed time
 		else {
-			numDay = factPart_numYear * daysInYearNonLeap;
-		}
+			numDay = 0;
+			numMonth = 0;
+			numYear = 0;
+			diffYear = 0;
+			diffMonth = 0;
+			diffDay = 0;
+			if (sMonth == eMonth) {		// less than a month in same month
+				numDay = eDay - sDay;
+			}
+			else {						// more than one month or less, but in different months
+				numMonth = 0;
+				while ((sMonth < (eMonth - 1))) {
+					numMonth++;
+					sMonth++;
+				}
 
-		i = 0;
-		numMonth = 0;
-		if (isLeapYear(eYear)) {
-			while (numDay > daysInMonthsLeap[i]) {
-				numDay = numDay - daysInMonthsLeap[i];
-				numMonth++; // enough days for a whole month
-				i++; // move to next month
-			}
-		}
-		else {
-			while (numDay > daysInMonthsNonLeap[i]) {
-				numDay = numDay - daysInMonthsNonLeap[i];
-				numMonth++; // enough days for a whole month
-				i++; // move to next month
-			}
-		}
+				// sMonth is now one month less than eMonth
+				if (sDay < eDay) {
+					numMonth++;
+					numDay = eDay - sDay;
+
+				}
+				else {
+					// Calculate days in the month where sMonth now points
+					daysStartMonth = 0;
+					if (isLeapYear(sYear)) {
+						// get days in first month, which might be a partial month
+						daysStartMonth = daysInMonthsLeap[sMonth - 1] - sDay;
+					}
+					else {
+						// get days in first month, which might be a partial month
+						daysStartMonth = daysInMonthsNonLeap[sMonth - 1] - sDay;
+					}
+
+					// Calculate the days in the endMonth
+					daysEndMonth = 0;
+					daysEndMonth = eDay;
+
+					numDay = 0;
+					numDay = daysStartMonth + daysEndMonth;
+
+				}
+
+			}	// end else if more than one month
+
+		}	// end of else for less than one year
+
 
 		diffDay = (int)numDay;
 		diffMonth = numMonth;
