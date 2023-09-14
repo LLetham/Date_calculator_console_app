@@ -26,27 +26,21 @@ private:
 	int i = 0;
 	int	sDay = 0, sMonth = 0, sYear = 0; // start year date
 	int	eDay = 0, eMonth = 0, eYear = 0; // end year date
-	int diffDay = 0, diffMonth = 0, diffYear = 0; //days, months, years between start date and end date
-	double numDay = 0; // number of days between start date and end date
-	int numMonth = 0;  // number of months as part of years, months, days from start date to end date
-	double numYear = 0, intPart_numYear = 0, factPart_numYear = 0; // number of years as calculated from numDays
-	int daysStartYear = 0;
-	int daysEndYear = 0;
-	int daysDiff = 0;
-	int totalDays = 0;
+	int durationDay = 0, durationMonth = 0, durationYear = 0; //days, months, years between start date and end date
 	bool leapYear = false;
-	int currentYear = 0; // NOT USED
 
-	// Variables for when the dates are less than a year apart
-	int daysStartMonth = 0;
-	int daysEndMonth = 0;
-
-	const int daysInMonthsNonLeap[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-	const int daysInMonthsLeap[12] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	//const int daysInMonthsNonLeap[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	// Sometimes you have to look at the number of days in the prior month. If the month is jan, then
+	// going back one month is outside of the array. Add dec as the month in [0] and access the 
+	// array by the month number to get the number of days for the month
+	// dec, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec
+	const int daysInMonthsNonLeap[13] = {31,31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	//const int daysInMonthsLeap[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 	const int daysInYearLeap = 366;
 	const int daysInYearNonLeap = 365;
 	const int monthsInYear = 12;
-	double daysPerYear = 365.242199;
+
+	int tmpa, tmpb, tmpc, tmpd;
 
 	// determine if the year is a leap year.
 	// return 1 if leap year.
@@ -69,181 +63,74 @@ public:
 	// function to calculate the difference in days between startDate and endDate.
 	void dateCalculator(int startMonth, int startDay, int startYear, int endMonth, int endDay, int endYear, int* diffMonthPtr, int* diffDayPtr, int* diffYearPtr) {
 
-		sDay = startDay;
 		sMonth = startMonth;
+		sDay = startDay;
 		sYear = startYear;
 
-		eDay = endDay;
 		eMonth = endMonth;
+		eDay = endDay;
 		eYear = endYear;
 
-		// if the endYear is not the same as the startYear, then:
-		// 1. count the days in the startYear to the end of the startYear.
-		// 2. count the days from the start of the endYear to the date in the endYear.
-		// 3. count the days in the years between startYear and endYear.
+		durationYear = 0;
+		durationMonth = 0;
+		durationDay = 0;
 
-		if (sYear != eYear) {
-			/////////////////////
-			// Calculate days from start date to end of startYear.
-			// If the sYear is a leap year, use daysInMonthLeap to count the days, otherwise use daysInMonthNonLeap.
-			daysStartYear = 0;
-			if (isLeapYear(sYear)) {
-				// get days in first month, which might be a partial month
-				daysStartYear = daysInMonthsLeap[sMonth - 1] - sDay;
-				sMonth++; // move to the next month in startYear;
+		tmpa = 0;
+		tmpb = 0;
+		tmpc = 0;
+		tmpd = 0;
 
-				// sum up the days in the whole months of the year
-				for (sMonth; sMonth <= monthsInYear; sMonth++) {
-					daysStartYear += daysInMonthsLeap[sMonth - 1];
-				}
-			}
-			else {
-				// get days in first month, which might be a partial month
-				daysStartYear = daysInMonthsNonLeap[sMonth - 1] - sDay;
-				sMonth++; // move to the next month in startYear;
+		// Put code here to detect when eDate is before sDate
+		// LL: need to change code to account for when the last month falls in February of a Leap year.
 
-				// sum up the days in the whole months of the year
-				for (sMonth; sMonth <= monthsInYear; sMonth++) {
-					daysStartYear += daysInMonthsNonLeap[sMonth - 1];
-				}
-			}
+		// cases: 0x000, 10, 12
+		if ((sYear <= eYear) && (sMonth <= eMonth) && (sDay <= eDay)) {
+			durationYear = eYear - sYear;
+			durationMonth = eMonth - sMonth;
+			durationDay = eDay - sDay;
+		}
 
+		// case 0x001
+		//else if ((sYear <= eYear) && (sMonth < eMonth) && (sDay > eDay)) { // may need this
+		//else if ((sYear <= eYear) && (sMonth <= eMonth) && (sDay > eDay)) {
 
-			// Calculate days from start of endYear to the date in endYear if
-			// endYear is not the same as startYear.
-			i = 1;
-			daysEndYear = 0;
-			if (isLeapYear(eYear)) {
-				// sum the days in the complete months
-				for (i; i < eMonth; i++) {
-					daysEndYear += daysInMonthsLeap[i - 1];
-				}
+		else if ((sYear <= eYear) && (sMonth < eMonth) && (sDay > eDay)) {
+			durationYear = eYear - sYear;
+			durationMonth = (eMonth - 1) - sMonth;
+			durationDay = (daysInMonthsNonLeap[(eMonth - 1)] -sDay) + eDay;
+		}
 
-				// add the days from the last month, which might be a partial month
-				daysEndYear += sDay;
+		// case 0x010
+		else if ((sYear < eYear) && (sMonth > eMonth) && (sDay <= eDay)) {
+			durationYear = (eYear - 1) - sYear;
+			durationMonth = (monthsInYear - sMonth) + eMonth;
+			durationDay = eDay - sDay;
+		}
 
-			}
-			else {
-				// sum the days in the complete months
-				for (i; i < eMonth; i++) {
-					daysEndYear += daysInMonthsNonLeap[i - 1];
-				}
+		// case 0x011
+		else if ((sYear < eYear) && (sMonth > eMonth) && (sDay > eDay)) {
+			durationYear = (eYear - 1) - sYear;
+			durationMonth = (monthsInYear - sMonth) + (eMonth - 1);
+			//durationDay = (daysInMonthsNonLeap[(eMonth - 1)] - sDay) + (eDay - 1);
+			durationDay = (daysInMonthsNonLeap[(eMonth - 1)] - sDay) + eDay;
+		}
 
-				// add the days from the last month, which might be a partial month
-				daysEndYear += eDay;
-			}
+		// case 11
+		// case 0x11 can be change to cover case 11: make month >=
+		else if ((sYear < eYear) && (sMonth == eMonth) && (sDay > eDay)) {
+			durationYear = (eYear - 1) - sYear;
+			durationMonth = (monthsInYear - sMonth) + (eMonth - 1);
+			durationDay = (daysInMonthsNonLeap[(eMonth - 1)] - sDay) + eDay;
+		}
 
-
-			// Count the days of the years between startYear and endYear excluding startYear and endYear
-			sYear++;
-			totalDays = 0;
-			totalDays = daysStartYear + daysEndYear;
-
-			for (sYear; sYear < (eYear); sYear++) {
-				if (isLeapYear(sYear)) {
-					totalDays += 366;
-				}
-				else {
-					totalDays += 365;
-				}
-			}
-
-			//cout << "Days between startDate and endDate: " << totalDays << endl << endl;
-
-			// Convert days to years, months and days
-			numYear = 0;
-			numYear = totalDays / daysPerYear;
-			factPart_numYear = modf(numYear, &intPart_numYear); // split float into interger and decimal portion
-
-			diffYear = (int)intPart_numYear; // get years, cast into integer
-
-			numDay = 0;
-			// get month
-			if (isLeapYear(eYear)) {
-				numDay = factPart_numYear * daysInYearLeap;
-			}
-			else {
-				numDay = factPart_numYear * daysInYearNonLeap;
-			}
-
-			i = 0;
-			numMonth = 0;
-			if (isLeapYear(eYear)) {
-				while (numDay > daysInMonthsLeap[i]) {
-					numDay = numDay - daysInMonthsLeap[i];
-					numMonth++; // enough days for a whole month
-					i++; // move to next month
-				}
-			}
-			else {
-				while (numDay > daysInMonthsNonLeap[i]) {
-					numDay = numDay - daysInMonthsNonLeap[i];
-					numMonth++; // enough days for a whole month
-					i++; // move to next month
-				}
-			}
-
-		}	// end of if for more than one year
-
-		
-		//////////////////////////////////////////////////////
-		// sYear == eYear
-		// less than a year of elapsed time
+		// unknown case
 		else {
-			numDay = 0;
-			numMonth = 0;
-			numYear = 0;
-			diffYear = 0;
-			diffMonth = 0;
-			diffDay = 0;
-			if (sMonth == eMonth) {		// less than a month in same month
-				numDay = eDay - sDay;
-			}
-			else {						// more than one month or less, but in different months
-				numMonth = 0;
-				while ((sMonth < (eMonth - 1))) {
-					numMonth++;
-					sMonth++;
-				}
+			cout << "Unknown Case" << endl;
+		}
 
-				// sMonth is now one month less than eMonth
-				if (sDay < eDay) {
-					numMonth++;
-					numDay = eDay - sDay;
-
-				}
-				else {
-					// Calculate days in the month where sMonth now points
-					daysStartMonth = 0;
-					if (isLeapYear(sYear)) {
-						// get days in first month, which might be a partial month
-						daysStartMonth = daysInMonthsLeap[sMonth - 1] - sDay;
-					}
-					else {
-						// get days in first month, which might be a partial month
-						daysStartMonth = daysInMonthsNonLeap[sMonth - 1] - sDay;
-					}
-
-					// Calculate the days in the endMonth
-					daysEndMonth = 0;
-					daysEndMonth = eDay;
-
-					numDay = 0;
-					numDay = daysStartMonth + daysEndMonth;
-
-				}
-
-			}	// end else if more than one month
-
-		}	// end of else for less than one year
-
-
-		diffDay = (int)numDay;
-		diffMonth = numMonth;
-
-		*diffDayPtr = diffDay;
-		*diffMonthPtr = diffMonth;
-		*diffYearPtr = diffYear;
+		*diffYearPtr = durationYear;
+		*diffMonthPtr = durationMonth;
+		*diffDayPtr = durationDay;
 	}
 
 

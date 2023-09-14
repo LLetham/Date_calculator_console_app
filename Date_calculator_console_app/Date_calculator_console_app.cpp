@@ -40,7 +40,7 @@ int main()
 
     // open test data file
     ifstream infile;
-    infile.open("date_test_data_01.txt");
+    infile.open("date_test_data_02.txt");
     //if (!infile) cout << "file cannot be opened" << endl;
     if (infile.is_open()) {
         cout << "file does exists" << endl;
@@ -74,8 +74,6 @@ int main()
 
             // This is where I will put the program that tests the date calculator
 
-            // days 582
-            // ans = 1 year, 7 month, 3 day
             dc.dateCalculator(sMonth, sDay, sYear, eMonth, eDay, eYear, diffMonthPtr, diffDayPtr, diffYearPtr);
             //cout << *diffYearPtr << " year " << *diffMonthPtr << " month " << *diffDayPtr << " day " << endl;
 
