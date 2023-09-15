@@ -86,6 +86,7 @@ int main()
             else {
                 numFail++;
                 cout << "NO pass" << endl;
+                cout << "NO pass" << endl;
                 cout << "File:\t\t" << durationYear << " year\t" << durationMonth << " month\t" << durationDay << " day" << endl;
                 cout << "Calculated:\t" << *diffYearPtr << " year\t" << *diffMonthPtr << " month\t" << *diffDayPtr << " day" << endl;
             }
