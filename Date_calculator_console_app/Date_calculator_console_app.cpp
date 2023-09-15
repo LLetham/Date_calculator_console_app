@@ -36,8 +36,6 @@ int main()
     bool fileOpen = false;
     int numPass = 0, numFail = 0;
 
-    std::cout << "Hello World!\n";
-
     // open test data file
     ifstream infile;
     infile.open("date_test_data_02.txt");
@@ -51,22 +49,11 @@ int main()
         fileOpen = false;
     }
 
+    // Run tests until data value 99 is read from test data file.
     while ((sMonth != 99) && (fileOpen)) {
 
         infile >> sMonth >> sDay >> sYear >> eMonth >> eDay >> eYear;
         infile >> sDate >> eDate >> durationTotalDays >> durationYear >> durationMonth >> durationDay;
-        //cout << "sMonth: " << sMonth << endl;
-        //cout << "sDay: " << sDay << endl;
-        //cout << "sYear: " << sYear << endl;
-        //cout << "eMonth: " << eMonth << endl;
-        //cout << "eDay: " << eDay << endl;
-        //cout << "eYear: " << eYear << endl;
-        //cout << "sDate: " << sDate << endl;
-        //cout << "eDate: " << eDate << endl;
-        //cout << "durationTotalDays: " << durationTotalDays << endl;
-        //cout << "durationYear: " << durationYear << endl;
-        //cout << "durationMonth: " << durationMonth << endl;
-        //cout << "durationDay: " << durationDay << endl;
 
         if (sMonth != 99) {
 
@@ -79,17 +66,15 @@ int main()
 
             if ((*diffMonthPtr == durationMonth) && (*diffDayPtr == durationDay) && (*diffYearPtr == durationYear)) {
                 numPass++;
-                cout << "PASS" << endl;
-                cout << "File:\t\t" << durationYear << " year\t" << durationMonth << " month\t" << durationDay << " day" << endl;
-                cout << "Calculated:\t" << *diffYearPtr << " year\t" << *diffMonthPtr << " month\t" << *diffDayPtr << " day" << endl;
+                // cout << "PASS" << endl;
             }
             else {
                 numFail++;
-                cout << "NO pass" << endl;
-                cout << "NO pass" << endl;
-                cout << "File:\t\t" << durationYear << " year\t" << durationMonth << " month\t" << durationDay << " day" << endl;
-                cout << "Calculated:\t" << *diffYearPtr << " year\t" << *diffMonthPtr << " month\t" << *diffDayPtr << " day" << endl;
+                cout << "NO PASS\tNO PASS\tNO PASS" << endl;
             }
+
+            cout << "File:\t\t" << durationYear << " year\t" << durationMonth << " month\t" << durationDay << " day" << endl;
+            cout << "Calculated:\t" << *diffYearPtr << " year\t" << *diffMonthPtr << " month\t" << *diffDayPtr << " day" << endl;
 
             cout << endl;
 
@@ -106,13 +91,3 @@ int main()
 
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file

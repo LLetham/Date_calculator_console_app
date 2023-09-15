@@ -28,14 +28,16 @@ private:
 	int	eDay = 0, eMonth = 0, eYear = 0; // end year date
 	int durationDay = 0, durationMonth = 0, durationYear = 0; //days, months, years between start date and end date
 	bool leapYear = false;
+	bool outputFlag = false;
 
 	//const int daysInMonthsNonLeap[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 	// Sometimes you have to look at the number of days in the prior month. If the month is jan, then
 	// going back one month is outside of the array. Add dec as the month in [0] and access the 
 	// array by the month number to get the number of days for the month
 	// dec, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec
-	const int daysInMonthsNonLeap[13] = {31,31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-	const int daysInMonthsLeap[13] = {31,31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	int daysInMonthsNonLeap[13] = {31,31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	int daysInMonthsLeap[13] = {31,31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	int *daysInMonthPtr;
 	const int daysInYearLeap = 366;
 	const int daysInYearNonLeap = 365;
 	const int monthsInYear = 12;
@@ -72,46 +74,36 @@ public:
 		eDay = endDay;
 		eYear = endYear;
 
+		outputFlag = false;
+
 		// check limits on days in months and numver of months
 		// Fix some of the possible errors in dates
 		if (sYear < 0) {
 			sYear = 0;
-			cout << "start year must be greater or equal to 0 (anno domini)" << endl;
-			cout << "Now from\t" << sMonth << "/" << sDay << "/" << sYear;
-			cout << "\tto\t" << eMonth << "/" << eDay << "/" << eYear << endl;
+			outputFlag = true;
 		}
 
 		if (eYear < 0) {
 			eYear = 0;
-			cout << "end year must be greater than 0 (anno domini)" << endl;
-			cout << "Now from\t" << sMonth << "/" << sDay << "/" << sYear;
-			cout << "\tto\t" << eMonth << "/" << eDay << "/" << eYear << endl;
+			outputFlag = true;
 		}
 
 		if (sMonth < 1) {
 			sMonth = 1;
-			cout << "Error in start month\t start month set to 1 (Jan)" << endl;
-			cout << "Now from\t" << sMonth << "/" << sDay << "/" << sYear;
-			cout << "\tto\t" << eMonth << "/" << eDay << "/" << eYear << endl;
+			outputFlag = true;
 		}
 		else if (sMonth > monthsInYear) {
 			sMonth = 12;
-			cout << "Error in start month\t start month set to 12 (Dec)" << endl;
-			cout << "Now from\t" << sMonth << "/" << sDay << "/" << sYear;
-			cout << "\tto\t" << eMonth << "/" << eDay << "/" << eYear << endl;
+			outputFlag = true;
 		}
 			
 		if (eMonth < 1) {
 			eMonth = 1;
-			cout << "Error in end month\t end month set to 1 (Jan)" << endl;
-			cout << "Now from\t" << sMonth << "/" << sDay << "/" << sYear;
-			cout << "\tto\t" << eMonth << "/" << eDay << "/" << eYear << endl;
+			outputFlag = true;
 		}
 		else if (eMonth > monthsInYear) {
 			eMonth = 12;
-			cout << "Error in end month\t end month set to 12 (Dec)" << endl;
-			cout << "Now from\t" << sMonth << "/" << sDay << "/" << sYear;
-			cout << "\tto\t" << eMonth << "/" << eDay << "/" << eYear << endl;
+			outputFlag = true;
 		}
 
 		// If end date is before the start date, swap the dates and calculate
@@ -128,6 +120,10 @@ public:
 			eDay = startDay;
 			eYear = startYear;
 
+			outputFlag = true;
+		}
+
+		if (outputFlag) {
 			cout << "Now from\t" << sMonth << "/" << sDay << "/" << sYear;
 			cout << "\tto\t" << eMonth << "/" << eDay << "/" << eYear << endl;
 		}
@@ -163,22 +159,19 @@ public:
 			durationYear = eYear - sYear;
 			durationMonth = (eMonth - 1) - sMonth;
 			if (isLeapYear(eYear) && ((eMonth - 1) == 2)) {
-				// if sDays > the no. of days in the month before sMonth, skip the whole month and just
-				// count the days of eMonth.
-				if (sDay > daysInMonthsLeap[(eMonth - 1)]) {
-					durationDay = eDay;
-				}
-				else {
-					durationDay = (daysInMonthsLeap[(eMonth - 1)] - sDay) + eDay;
-				}
+				daysInMonthPtr = daysInMonthsLeap;
 			}
 			else {
-				if (sDay > daysInMonthsLeap[(eMonth - 1)]) {
-					durationDay = eDay;
-				}
-				else {
-					durationDay = (daysInMonthsNonLeap[(eMonth - 1)] - sDay) + eDay;
-				}
+				daysInMonthPtr = daysInMonthsNonLeap;
+			}
+
+			// if sDays > the no. of days in the month before sMonth, skip the whole month and just
+			// count the days of eMonth.
+			if (sDay > *(daysInMonthPtr + (eMonth - 1))) {
+				durationDay = eDay;
+			}
+			else {
+				durationDay = (*(daysInMonthPtr + (eMonth - 1)) - sDay) + eDay;
 			}
 		}
 
@@ -194,22 +187,19 @@ public:
 			durationYear = (eYear - 1) - sYear;
 			durationMonth = (monthsInYear - sMonth) + (eMonth - 1);
 			if (isLeapYear(eYear) && ((eMonth - 1) == 2)) {
-				// if sDays > the no. of days in the month before sMonth, skip the whole month and just
-				// count the days of eMonth.
-				if (sDay > daysInMonthsLeap[(eMonth - 1)]) {
-					durationDay = eDay;
-				}
-				else {
-					durationDay = (daysInMonthsLeap[(eMonth - 1)] - sDay) + eDay;
-				}
+				daysInMonthPtr = daysInMonthsLeap;
 			}
 			else {
-				if (sDay > daysInMonthsLeap[(eMonth - 1)]) {
-					durationDay = eDay;
-				}
-				else {
-					durationDay = (daysInMonthsNonLeap[(eMonth - 1)] - sDay) + eDay;
-				}
+				daysInMonthPtr = daysInMonthsNonLeap;
+			}
+
+			// if sDays > the no. of days in the month before sMonth, skip the whole month and just
+			// count the days of eMonth.
+			if (sDay > *(daysInMonthPtr + (eMonth - 1))) {
+				durationDay = eDay;
+			}
+			else {
+				durationDay = (*(daysInMonthPtr + (eMonth - 1)) - sDay) + eDay;
 			}
 		}
 
