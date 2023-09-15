@@ -59,24 +59,69 @@ private:
 
 public:
 
-	// function to calculate the difference in days between startDate and endDate.
+	// function to calculate duration between between startDate and endDate.
+	// calculation is done in Years, Months and Days. Days are not counted between
+	// the start date sdate and the end date eDate.
 	void dateCalculator(int startMonth, int startDay, int startYear, int endMonth, int endDay, int endYear, int* diffMonthPtr, int* diffDayPtr, int* diffYearPtr) {
 
-		sMonth = startMonth;
-		sDay = startDay;
-		sYear = startYear;
+		// check limits on days in months and numver of months
+		if (sYear < 0) {
+			sYear = 0;
+			cout << "start year must be greater than 0 (anno domini)" << endl;
+		}
 
-		eMonth = endMonth;
-		eDay = endDay;
-		eYear = endYear;
+		if (eYear < 0) {
+			eYear = 0;
+			cout << "end year must be greater than 0 (anno domini)" << endl;
+		}
+		if (sMonth < 1) {
+			sMonth = 1;
+			cout << "Error in start month\t start month set to 1 (Jan)" << endl;
+		}
+		else if (sMonth > monthsInYear) {
+			sMonth = 12;
+			cout << "Error in start month\t start month set to 12 (Dec)" << endl;
+		}
+			
+		if (eMonth < 1) {
+			eMonth = 1;
+			cout << "Error in end month\t start month set to 1 (Jan)" << endl;
+		}
+		else if (eMonth > monthsInYear) {
+			eMonth = 12;
+			cout << "Error in end month\t start month set to 12 (Dec)" << endl;
+		}
+
+		// If end date is before the start date, swap the dates and calculate
+		// the years, months and days in between.
+		if ((sYear > eYear) ||
+			((sYear == eYear) && (sMonth > eMonth)) ||
+			((sYear == eYear) && (sMonth == eMonth)) && (sDay > eDay)) {
+			cout << "End date occurs before Start date: switching dates" << endl;
+			sMonth = endMonth;
+			sDay = endDay;
+			sYear = endYear;
+
+			eMonth = startMonth;
+			eDay = startDay;
+			eYear = startYear;
+		}
+		else {
+			sMonth = startMonth;
+			sDay = startDay;
+			sYear = startYear;
+
+			eMonth = endMonth;
+			eDay = endDay;
+			eYear = endYear;
+		}
 
 		durationYear = 0;
 		durationMonth = 0;
 		durationDay = 0;
 
-		// Put code here to detect when eDate is before sDate
-		// LL: need to change code to account for when the last month falls in February of a Leap year.
-
+		///////////////////////////////////////////////
+		// Start counting years, months and days between sDate and eDate.
 		// cases: 0x000, 10, 12
 		if ((sYear <= eYear) && (sMonth <= eMonth) && (sDay <= eDay)) {
 			durationYear = eYear - sYear;
