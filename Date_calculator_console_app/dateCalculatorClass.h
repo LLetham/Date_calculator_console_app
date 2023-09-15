@@ -35,12 +35,11 @@ private:
 	// array by the month number to get the number of days for the month
 	// dec, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec
 	const int daysInMonthsNonLeap[13] = {31,31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	const int daysInMonthsLeap[13] = {31,31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 	//const int daysInMonthsLeap[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 	const int daysInYearLeap = 366;
 	const int daysInYearNonLeap = 365;
 	const int monthsInYear = 12;
-
-	int tmpa, tmpb, tmpc, tmpd;
 
 	// determine if the year is a leap year.
 	// return 1 if leap year.
@@ -75,11 +74,6 @@ public:
 		durationMonth = 0;
 		durationDay = 0;
 
-		tmpa = 0;
-		tmpb = 0;
-		tmpc = 0;
-		tmpd = 0;
-
 		// Put code here to detect when eDate is before sDate
 		// LL: need to change code to account for when the last month falls in February of a Leap year.
 
@@ -97,7 +91,12 @@ public:
 		else if ((sYear <= eYear) && (sMonth < eMonth) && (sDay > eDay)) {
 			durationYear = eYear - sYear;
 			durationMonth = (eMonth - 1) - sMonth;
-			durationDay = (daysInMonthsNonLeap[(eMonth - 1)] -sDay) + eDay;
+			if ((isLeapYear(eYear) || isLeapYear(sYear)) && ((eMonth == 2) || (sMonth == 2))) {
+				durationDay = (daysInMonthsLeap[(eMonth - 1)] - sDay) + eDay;
+			}
+			else {
+				durationDay = (daysInMonthsNonLeap[(eMonth - 1)] - sDay) + eDay;
+			}
 		}
 
 		// case 0x010
@@ -108,19 +107,15 @@ public:
 		}
 
 		// case 0x011
-		else if ((sYear < eYear) && (sMonth > eMonth) && (sDay > eDay)) {
+		else if ((sYear < eYear) && (sMonth >= eMonth) && (sDay > eDay)) {
 			durationYear = (eYear - 1) - sYear;
 			durationMonth = (monthsInYear - sMonth) + (eMonth - 1);
-			//durationDay = (daysInMonthsNonLeap[(eMonth - 1)] - sDay) + (eDay - 1);
-			durationDay = (daysInMonthsNonLeap[(eMonth - 1)] - sDay) + eDay;
-		}
-
-		// case 11
-		// case 0x11 can be change to cover case 11: make month >=
-		else if ((sYear < eYear) && (sMonth == eMonth) && (sDay > eDay)) {
-			durationYear = (eYear - 1) - sYear;
-			durationMonth = (monthsInYear - sMonth) + (eMonth - 1);
-			durationDay = (daysInMonthsNonLeap[(eMonth - 1)] - sDay) + eDay;
+			if ((isLeapYear(eYear) || isLeapYear(sYear)) && ((eMonth == 2) || (sMonth == 2))) {
+				durationDay = (daysInMonthsLeap[(eMonth - 1)] - sDay) + eDay;
+			}
+			else {
+				durationDay = (daysInMonthsNonLeap[(eMonth - 1)] - sDay) + eDay;
+			}
 		}
 
 		// unknown case
