@@ -142,50 +142,44 @@ public:
 		durationMonth = 0;
 		durationDay = 0;
 
-		///////////////////////////////////////////////
+		/*****************************************************************/
 		// Start counting years, months and days between sDate and eDate.
-		// cases: 0x000, 10, 12
-		if ((sYear <= eYear) && (sMonth <= eMonth) && (sDay <= eDay)) {
+
+		// cases:0, 2, 6, 8, 9, 11, 15 and 17
+		if (((eYear > sYear) && (eMonth > sMonth) && (eDay > sDay)) ||		// case 0
+			((eYear > sYear) && (eMonth == sMonth) && (eDay > sDay)) ||		// case 2
+			((eYear > sYear) && (eMonth > sMonth) && (eDay == sDay)) ||		// case 6
+			((eYear > sYear) && (eMonth == sMonth) && (eDay == sDay)) ||	// case 8
+			((eYear == sYear) && (eMonth > sMonth) && (eDay > sDay)) ||		// case 9
+			((eYear == sYear) && (eMonth == sMonth) && (eDay > sDay)) ||	// case 11
+			((eYear == sYear) && (eMonth > sMonth) && (eDay == sDay)) ||	// case 15
+			((eYear == sYear) && (eMonth == sMonth) && (eDay == sDay))		// case 17
+			) 
+		{
 			durationYear = eYear - sYear;
 			durationMonth = eMonth - sMonth;
 			durationDay = eDay - sDay;
 		}
 
-		// case 0x001
-		//else if ((sYear <= eYear) && (sMonth < eMonth) && (sDay > eDay)) { // may need this
-		//else if ((sYear <= eYear) && (sMonth <= eMonth) && (sDay > eDay)) {
-
-		else if ((sYear <= eYear) && (sMonth < eMonth) && (sDay > eDay)) {
-			durationYear = eYear - sYear;
-			durationMonth = (eMonth - 1) - sMonth;
-			if (isLeapYear(eYear) && ((eMonth - 1) == 2)) {
-				daysInMonthPtr = daysInMonthsLeap;
-			}
-			else {
-				daysInMonthPtr = daysInMonthsNonLeap;
-			}
-
-			// if sDays > the no. of days in the month before sMonth, skip the whole month and just
-			// count the days of eMonth.
-			if (sDay > *(daysInMonthPtr + (eMonth - 1))) {
-				durationDay = eDay;
-			}
-			else {
-				durationDay = (*(daysInMonthPtr + (eMonth - 1)) - sDay) + eDay;
-			}
-		}
-
-		// case 0x010
-		else if ((sYear < eYear) && (sMonth > eMonth) && (sDay <= eDay)) {
-			durationYear = (eYear - 1) - sYear;
+		// cases: 1 and 7
+		else if (((eYear > sYear) && (eMonth < sMonth) && (eDay > sDay)) ||		// case 1
+				((eYear > sYear) && (eMonth < sMonth) && (eDay == sDay))		// case 7
+			)
+		{
+			durationYear = (eYear - sYear) - 1;
 			durationMonth = (monthsInYear - sMonth) + eMonth;
 			durationDay = eDay - sDay;
 		}
 
-		// case 0x011
-		else if ((sYear < eYear) && (sMonth >= eMonth) && (sDay > eDay)) {
-			durationYear = (eYear - 1) - sYear;
-			durationMonth = (monthsInYear - sMonth) + (eMonth - 1);
+		// cases: 3 and 12
+		else if (((eYear > sYear) && (eMonth > sMonth) && (eDay < sDay)) ||		// case 3
+				((eYear == sYear) && (eMonth > sMonth) && (eDay < sDay))		// case 12
+			)
+		{
+			durationYear = (eYear - sYear);
+			durationMonth = (eMonth - sMonth) - 1;
+
+			// Check for leap year
 			if (isLeapYear(eYear) && ((eMonth - 1) == 2)) {
 				daysInMonthPtr = daysInMonthsLeap;
 			}
@@ -193,19 +187,45 @@ public:
 				daysInMonthPtr = daysInMonthsNonLeap;
 			}
 
-			// if sDays > the no. of days in the month before sMonth, skip the whole month and just
-			// count the days of eMonth.
-			if (sDay > *(daysInMonthPtr + (eMonth - 1))) {
+			// If sDay > daysInMonthPtr[eMonth - 1], then do not subtract sDay from daysInMonthPtr[eMonth - 1]
+			// because all of the days of the eMonth - 1 month have been accounted for.
+			if (sDay >= daysInMonthPtr[eMonth - 1]) {
 				durationDay = eDay;
 			}
 			else {
-				durationDay = (*(daysInMonthPtr + (eMonth - 1)) - sDay) + eDay;
+				durationDay = (daysInMonthPtr[eMonth - 1] - sDay) + eDay;
 			}
 		}
 
-		// unknown case
+		// cases: 4 and 5
+		else if (((eYear > sYear) && (eMonth < sMonth) && (eDay < sDay)) ||		// case 4
+				((eYear > sYear) && (eMonth == sMonth) && (eDay < sDay))			// case 5
+			)
+		{
+			durationYear = (eYear - sYear) - 1;
+			durationMonth = ((monthsInYear - sMonth) + eMonth) - 1;
+
+			// Check for leap year
+			if (isLeapYear(eYear) && ((eMonth - 1) == 2)) {
+				daysInMonthPtr = daysInMonthsLeap;
+			}
+			else {
+				daysInMonthPtr = daysInMonthsNonLeap;
+			}
+
+			// If sDay > daysInMonthPtr[eMonth - 1], then do not subtract sDay from daysInMonthPtr[eMonth - 1]
+			// because all of the days of the eMonth - 1 month have been accounted for.
+			if (sDay >= daysInMonthPtr[eMonth - 1]) {
+				durationDay = eDay;
+			}
+			else {
+				durationDay = (daysInMonthPtr[eMonth - 1] - sDay) + eDay;
+			}
+		}
+
 		else {
-			cout << "Unknown Case" << endl;
+			// date does not fall in any of the above classes
+			cout << "ERROR: Date formulas not found" << endl;
 		}
 
 		*diffYearPtr = durationYear;

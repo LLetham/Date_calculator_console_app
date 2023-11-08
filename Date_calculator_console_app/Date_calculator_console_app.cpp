@@ -38,7 +38,7 @@ int main()
 
     // open test data file
     ifstream infile;
-    infile.open("date_test_data_03.txt");
+    infile.open("date_test_data_04.txt");
     //if (!infile) cout << "file cannot be opened" << endl;
     if (infile.is_open()) {
         cout << "file does exists" << endl;
@@ -57,7 +57,7 @@ int main()
 
         if (sMonth != 99) {
 
-            //cout << "From\t" << sDate << "\tto\t" << eDate << endl;
+            //cout << "From\t" << sDate << "\tto\t" << eDate;
 
             // This is where I will put the program that tests the date calculator
 
@@ -70,15 +70,15 @@ int main()
             }
             else {
                 numFail++;
-                cout << "From\t" << sDate << "\tto\t" << eDate << endl;
-
-                cout << "NO PASS\tNO PASS\tNO PASS" << endl;
+                cout << "From\t" << sDate << "\tto\t" << eDate << "\tNO PASS\tNO PASS\tNO PASS" << endl;
+                cout << "File:\t\t" << durationYear << " year\t" << durationMonth << " month\t" << durationDay << " day" << endl;
+                cout << "Calculated:\t" << *diffYearPtr << " year\t" << *diffMonthPtr << " month\t" << *diffDayPtr << " day" << endl << endl;
             }
 
             //cout << "File:\t\t" << durationYear << " year\t" << durationMonth << " month\t" << durationDay << " day" << endl;
             //cout << "Calculated:\t" << *diffYearPtr << " year\t" << *diffMonthPtr << " month\t" << *diffDayPtr << " day" << endl;
 
-            cout << endl;
+            //cout << endl;
 
         } // if
 
