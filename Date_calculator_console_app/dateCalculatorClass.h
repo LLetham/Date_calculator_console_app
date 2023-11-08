@@ -111,7 +111,7 @@ public:
 		if ((sYear > eYear) ||
 			((sYear == eYear) && (sMonth > eMonth)) ||
 			((sYear == eYear) && (sMonth == eMonth)) && (sDay > eDay)) {
-			cout << "End date occurs before Start date: switching dates" << endl;
+			//cout << "End date occurs before Start date: switching dates" << endl;
 			sMonth = endMonth;
 			sDay = endDay;
 			sYear = endYear;
@@ -124,7 +124,7 @@ public:
 		}
 
 		if (outputFlag) {
-			cout << "Now from\t" << sMonth << "/" << sDay << "/" << sYear;
+			cout << "Date error found. Duration calculated from\t" << sMonth << "/" << sDay << "/" << sYear;
 			cout << "\tto\t" << eMonth << "/" << eDay << "/" << eYear << endl;
 		}
 
@@ -149,8 +149,9 @@ public:
 		if (((eYear >= sYear) && (eMonth > sMonth) && (eDay > sDay)) ||		// cases 0, 9
 			((eYear >= sYear) && (eMonth == sMonth) && (eDay > sDay)) ||	// cases 2, 11
 			((eYear >= sYear) && (eMonth > sMonth) && (eDay == sDay)) ||	// cases 6, 15
-			((eYear > sYear) && (eMonth == sMonth) && (eDay == sDay))		// cases 8, 17
-			) 
+			((eYear > sYear) && (eMonth == sMonth) && (eDay == sDay)) ||	// cases 8, 17
+			((eYear == sYear) && (eMonth == sMonth) && (eDay == sDay))		// start date = end date
+			)
 		{
 			durationYear = eYear - sYear;
 			durationMonth = eMonth - sMonth;
