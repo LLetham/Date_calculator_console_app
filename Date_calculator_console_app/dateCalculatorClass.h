@@ -146,14 +146,10 @@ public:
 		// Start counting years, months and days between sDate and eDate.
 
 		// cases:0, 2, 6, 8, 9, 11, 15 and 17
-		if (((eYear > sYear) && (eMonth > sMonth) && (eDay > sDay)) ||		// case 0
-			((eYear > sYear) && (eMonth == sMonth) && (eDay > sDay)) ||		// case 2
-			((eYear > sYear) && (eMonth > sMonth) && (eDay == sDay)) ||		// case 6
-			((eYear > sYear) && (eMonth == sMonth) && (eDay == sDay)) ||	// case 8
-			((eYear == sYear) && (eMonth > sMonth) && (eDay > sDay)) ||		// case 9
-			((eYear == sYear) && (eMonth == sMonth) && (eDay > sDay)) ||	// case 11
-			((eYear == sYear) && (eMonth > sMonth) && (eDay == sDay)) ||	// case 15
-			((eYear == sYear) && (eMonth == sMonth) && (eDay == sDay))		// case 17
+		if (((eYear >= sYear) && (eMonth > sMonth) && (eDay > sDay)) ||		// cases 0, 9
+			((eYear >= sYear) && (eMonth == sMonth) && (eDay > sDay)) ||	// cases 2, 11
+			((eYear >= sYear) && (eMonth > sMonth) && (eDay == sDay)) ||	// cases 6, 15
+			((eYear > sYear) && (eMonth == sMonth) && (eDay == sDay))		// cases 8, 17
 			) 
 		{
 			durationYear = eYear - sYear;
@@ -172,8 +168,7 @@ public:
 		}
 
 		// cases: 3 and 12
-		else if (((eYear > sYear) && (eMonth > sMonth) && (eDay < sDay)) ||		// case 3
-				((eYear == sYear) && (eMonth > sMonth) && (eDay < sDay))		// case 12
+		else if (((eYear >= sYear) && (eMonth > sMonth) && (eDay < sDay))	// cases 3, 12
 			)
 		{
 			durationYear = (eYear - sYear);
@@ -198,8 +193,7 @@ public:
 		}
 
 		// cases: 4 and 5
-		else if (((eYear > sYear) && (eMonth < sMonth) && (eDay < sDay)) ||		// case 4
-				((eYear > sYear) && (eMonth == sMonth) && (eDay < sDay))			// case 5
+		else if (((eYear > sYear) && (eMonth <= sMonth) && (eDay < sDay)) 		// cases 4, 5
 			)
 		{
 			durationYear = (eYear - sYear) - 1;
