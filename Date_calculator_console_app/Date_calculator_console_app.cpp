@@ -38,7 +38,7 @@ int main()
 
     // open test data file
     ifstream infile;
-    infile.open("date_test_data_02.txt");
+    infile.open("date_test_data_03.txt");
     //if (!infile) cout << "file cannot be opened" << endl;
     if (infile.is_open()) {
         cout << "file does exists" << endl;
@@ -57,7 +57,7 @@ int main()
 
         if (sMonth != 99) {
 
-            cout << "From\t" << sDate << "\tto\t" << eDate << endl;
+            //cout << "From\t" << sDate << "\tto\t" << eDate << endl;
 
             // This is where I will put the program that tests the date calculator
 
@@ -70,11 +70,13 @@ int main()
             }
             else {
                 numFail++;
+                cout << "From\t" << sDate << "\tto\t" << eDate << endl;
+
                 cout << "NO PASS\tNO PASS\tNO PASS" << endl;
             }
 
-            cout << "File:\t\t" << durationYear << " year\t" << durationMonth << " month\t" << durationDay << " day" << endl;
-            cout << "Calculated:\t" << *diffYearPtr << " year\t" << *diffMonthPtr << " month\t" << *diffDayPtr << " day" << endl;
+            //cout << "File:\t\t" << durationYear << " year\t" << durationMonth << " month\t" << durationDay << " day" << endl;
+            //cout << "Calculated:\t" << *diffYearPtr << " year\t" << *diffMonthPtr << " month\t" << *diffDayPtr << " day" << endl;
 
             cout << endl;
 
@@ -85,6 +87,13 @@ int main()
     cout << endl;
     cout << "Number of tests passed:\t" << numPass << endl;
     cout << "Number of tests failed:\t" << numFail << endl;
+
+    dc.dateCalculator(6, 15, 1984, 8, 10, 2003, diffMonthPtr, diffDayPtr, diffYearPtr);
+    cout << *diffYearPtr << " year " << *diffMonthPtr << " month " << *diffDayPtr << " day " << endl;
+
+    dc.dateCalculator(10, 15, 2006, 10, 12, 2023, diffMonthPtr, diffDayPtr, diffYearPtr);
+    cout << *diffYearPtr << " year " << *diffMonthPtr << " month " << *diffDayPtr << " day " << endl;
+
 
     infile.close();
 

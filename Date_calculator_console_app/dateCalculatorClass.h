@@ -76,7 +76,7 @@ public:
 
 		outputFlag = false;
 
-		// check limits on days in months and numver of months
+		// check limits on days in months and number of months
 		// Fix some of the possible errors in dates
 		if (sYear < 0) {
 			sYear = 0;
